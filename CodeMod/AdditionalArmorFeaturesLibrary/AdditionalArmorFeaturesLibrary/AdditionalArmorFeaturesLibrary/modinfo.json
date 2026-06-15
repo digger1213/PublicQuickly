@@ -1,0 +1,14 @@
+{
+    "$schema": "https://moddbcdn.vintagestory.at/schema/modinfo.latest.json",
+    "type": "Code",
+    "modid": "additionalarmorfeatureslibrary",
+    "name": "AdditionalArmorFeaturesLibrary",
+    "authors": [
+        "Dangodangodango"
+    ],
+    "description": "Library for additional armor features",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": "1.22.*"
+    }
+}

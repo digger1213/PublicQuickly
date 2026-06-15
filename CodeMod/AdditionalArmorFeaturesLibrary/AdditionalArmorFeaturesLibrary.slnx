@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AdditionalArmorFeaturesLibrary/AdditionalArmorFeaturesLibrary/AdditionalArmorFeaturesLibrary.csproj" />
+  <Project Path="AdditionalArmorFeaturesLibrary/ZZCakeBuild/CakeBuild.csproj" />
+</Solution>
