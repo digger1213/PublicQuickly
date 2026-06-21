@@ -1,6 +1,4 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
-using AdditionalArmorFeaturesLibrary.Items;
-using AdditionalArmorFeaturesLibrary.Util;
 using AdditionalArmorFeaturesLibrary.Utils;
 using System;
 using System.Linq;
@@ -8,25 +6,19 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
+
 namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 {
-
-#nullable enable
-
-    class CollectibleBehaviorArmorFeatures : CollectibleBehavior
+    internal class CollectibleBehaviorPower : CollectibleBehavior
     {
-
         private ICoreAPI? api { get; set; }
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
 
-        public ItemAdditionalFeatures item = new ItemAdditionalFeatures { };
-
-        public CollectibleBehaviorArmorFeatures(CollectibleObject collObj) : base(collObj)
+        public CollectibleBehaviorPower(CollectibleObject collObj) : base(collObj)
         {
         }
 
@@ -37,15 +29,15 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             base.OnLoaded(api);
         }
 
-        public bool LightState(ItemStack stack)
+        public bool PowerState(ItemStack stack)
         {
-            Console.WriteLine("Lightstate trigger");
-            return stack.Attributes.GetBool("togglelight");
+            Console.WriteLine("PowerState trigger");
+            return stack.Attributes.GetBool("togglepower");
         }
 
-        public virtual void SetLightActive(ItemSlot slot, bool active, EntityPlayer player)
+        public virtual void SetPowerActive(ItemSlot slot, bool active, EntityPlayer player)
         {
-            Console.WriteLine("SetLightActive");
+            Console.WriteLine("SetPowerActive");
             if (slot == null || slot.Empty || api == null) return;
 
             ItemStack stack = slot.Itemstack;
@@ -59,9 +51,9 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 {
                     (api as ICoreClientAPI)?.TriggerIngameError(
                         this,
-                        "lightnofuel",
+                        "itemnofuel",
                         Lang.Get(
-                            "additionalarmorefeatureslibrary:ingameerror-light-nofuel",
+                            "additionalarmorefeatureslibrary:ingameerror-item-nofuel",
                             stack.Collectible.GetHeldItemName(stack)
                         )
                     );
@@ -74,7 +66,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             if (player != null)
             {
-                string soundPath = ArmorFeaturesProp.ReadFrom(stack)?.lightSoundPath ?? string.Empty;
+                string soundPath = ArmorFeaturesProp.ReadFrom(stack)?.powerSoundPath ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(soundPath))
                 {
@@ -91,7 +83,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             }
 
             // Update state
-            stack.Attributes.SetBool("togglelight", active);
+            stack.Attributes.SetBool("togglepower", active);
 
             string currentCode = stack.Collectible.Code.ToString();
 
@@ -111,10 +103,18 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 };
             }
 
-            //item.GetLightHsv();
+            //Turn off all toggleables if FeaturesUsePower
+            if (!active && ArmorFeaturesProp.ReadFrom(slot.Itemstack).FeaturesUsePower)
+            {
+                var lightBehavior = slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorLight>(true);
+                lightBehavior?.SetLightActive(slot, false, player);
+
+            }
+
 
             slot.MarkDirty();
         }
+
 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
         {
@@ -124,13 +124,13 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 {
                     ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-activeslot"),
                     MouseButton = EnumMouseButton.None,
-                    HotKeyCode = "toggleLight"
+                    HotKeyCode = "togglePower"
                 },
                 new WorldInteraction
                 {
                     ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-gearslot"),
                     MouseButton = EnumMouseButton.None,
-                    HotKeyCode = "toggleHoveredGearLight"
+                    HotKeyCode = "toggleHoveredGearPower"
 
                 }
             }.Append(base.GetHeldInteractionHelp(inSlot, ref handling));

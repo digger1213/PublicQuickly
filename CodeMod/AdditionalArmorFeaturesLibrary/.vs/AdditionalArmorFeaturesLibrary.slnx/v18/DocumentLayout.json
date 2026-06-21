@@ -3,32 +3,32 @@
   "WorkspaceRootPath": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\harmonypatches\\lightrenderpatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\harmonypatches\\lightrenderpatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\core\\additionalarmorfeatureslibrarymodsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\core\\additionalarmorfeatureslibrarymodsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblbehaviorarmorfeatures.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblbehaviorarmorfeatures.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorlight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorlight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorfuel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorfuel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\utils\\armorfeaturesprop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\utils\\armorfeaturesprop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\items\\additionalfeatures.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\items\\additionalfeatures.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\utils\\armorfeaturesprop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\utils\\armorfeaturesprop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorpower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorpower.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\network\\packet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\network\\packet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|h:\\development\\trta-dev\\torulethemall\\dangosfolder\\codemod\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorfuel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FE6931A2-C52F-F08F-BA29-03E8595AF4D2}|AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj|solutionrelative:additionalarmorfeatureslibrary\\additionalarmorfeatureslibrary\\collectible\\behavior\\collectiblebehaviorfuel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -43,90 +43,90 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "LightRenderPatch.cs",
-              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\HarmonyPatches\\LightRenderPatch.cs",
-              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\HarmonyPatches\\LightRenderPatch.cs",
-              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\HarmonyPatches\\LightRenderPatch.cs",
-              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\HarmonyPatches\\LightRenderPatch.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAANAAAAAAAAAA==",
+              "Title": "AdditionalArmorFeaturesLibraryModSystem.cs",
+              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
+              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
+              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
+              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
+              "ViewState": "AgIAALoAAAAAAAAAAAAwwMYAAABKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-20T20:43:37.034Z",
+              "WhenOpened": "2026-06-21T11:46:40.361Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "Packet.cs",
+              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Network\\Packet.cs",
+              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Network\\Packet.cs",
+              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Network\\Packet.cs",
+              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Network\\Packet.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-21T10:15:10.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CollectibleBehaviorPower.cs",
+              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorPower.cs",
+              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorPower.cs",
+              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorPower.cs",
+              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorPower.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAewEoAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-21T09:53:17.385Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CollectibleBehaviorLight.cs",
+              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorLight.cs",
+              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorLight.cs",
+              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorLight.cs",
+              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorLight.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAwwCQAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-21T09:53:05.109Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "AdditionalFeatures.cs",
               "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Items\\AdditionalFeatures.cs",
               "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Items\\AdditionalFeatures.cs",
               "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Items\\AdditionalFeatures.cs",
               "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Items\\AdditionalFeatures.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-19T17:12:59.851Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AdditionalArmorFeaturesLibrary.csproj",
-              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj",
-              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj",
-              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj",
-              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-06-19T08:56:58.82Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "CollectiblBehaviorArmorFeatures.cs",
-              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectiblBehaviorArmorFeatures.cs",
-              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectiblBehaviorArmorFeatures.cs",
-              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectiblBehaviorArmorFeatures.cs",
-              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectiblBehaviorArmorFeatures.cs",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAmwHEAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-19T08:55:43.909Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AdditionalArmorFeaturesLibraryModSystem.cs",
-              "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
-              "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
-              "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
-              "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Core\\AdditionalArmorFeaturesLibraryModSystem.cs",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAAAIIAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-18T08:48:40.293Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "ArmorFeaturesProp.cs",
               "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Utils\\ArmorFeaturesProp.cs",
               "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Utils\\ArmorFeaturesProp.cs",
               "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Utils\\ArmorFeaturesProp.cs",
               "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Utils\\ArmorFeaturesProp.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-17T12:28:27.832Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "CollectibleBehaviorFuel.cs",
               "DocumentMoniker": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorFuel.cs",
               "RelativeDocumentMoniker": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorFuel.cs",
               "ToolTip": "H:\\DEVELOPMENT\\TRTA-Dev\\ToRuleThemAll\\DangosFolder\\CodeMod\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorFuel.cs",
               "RelativeToolTip": "AdditionalArmorFeaturesLibrary\\AdditionalArmorFeaturesLibrary\\Collectible\\Behavior\\CollectibleBehaviorFuel.cs",
-              "ViewState": "AgIAAAIBAAAAAAAAAAA8wCkBAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAA4BAAAAAAAAAIA8wC4BAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-14T17:44:38.491Z",
               "EditorCaption": ""

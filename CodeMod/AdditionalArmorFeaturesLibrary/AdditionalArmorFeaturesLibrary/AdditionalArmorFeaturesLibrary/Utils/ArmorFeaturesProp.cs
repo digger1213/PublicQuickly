@@ -11,18 +11,29 @@ namespace AdditionalArmorFeaturesLibrary.Utils
     public class ArmorFeaturesProp
     {
 
-        //public string jetSoundPath { get; set; } = string.Empty;
+        
 
         //Current Stats
+        //Music vars.
         public string? lightSoundPath { get; set; }
+        public string? powerSoundPath { get; set; }
+
+        //public string jetSoundPath { get; set; } = string.Empty;
+
+        //Power vars.
+        public bool FeaturesUsePower { get; set; } = false;
 
         public float? fuelCapacity;
         public string PowerType { get; set; } = "fuel";
         public bool? UseFuel { get; set; }
         public bool? OnCraftedFueled { get; set; }
         public Dictionary<string, float> FuelList { get; set; } = new();
+
+        //Light var.
         public byte[] lightHSV { get; set; } = new byte[0];
 
+        //
+        //?
 
         public static ArmorFeaturesProp? ReadFrom(ItemStack itemStack)
         {

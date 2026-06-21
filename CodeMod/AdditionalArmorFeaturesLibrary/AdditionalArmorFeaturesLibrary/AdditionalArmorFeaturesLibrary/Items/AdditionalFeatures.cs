@@ -13,7 +13,6 @@ namespace AdditionalArmorFeaturesLibrary.Items
     {
         public override byte[] GetLightHsv(IBlockAccessor blockAccessor, BlockPos pos, ItemStack stack)
         {
-            Console.WriteLine("GOT IN LIGHTHSV");
             if (!stack.Attributes.GetBool("togglelight"))
             {
                 return new byte[] { 0, 0, 0 };

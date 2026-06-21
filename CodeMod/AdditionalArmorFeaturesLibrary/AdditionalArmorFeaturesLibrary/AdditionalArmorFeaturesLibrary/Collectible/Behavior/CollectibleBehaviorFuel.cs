@@ -137,9 +137,9 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 {
                     (api as ICoreClientAPI)?.TriggerIngameError(
                         this,
-                        "lightfull",
+                        "Itemfull",
                         Lang.Get(
-                            "additionalarmorfeatureslibrary:ingameerror-light-full",
+                            "additionalarmorfeatureslibrary:ingameerror-item-full",
                             sinkStack.Collectible.GetHeldItemName(sinkStack)
                         )
                     );
@@ -154,12 +154,6 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             op.MovedQuantity = 1;
             op?.SourceSlot?.TakeOut(1);
             op?.SourceSlot?.MarkDirty();
-
-            //api.Event.EnqueueMainThreadTask(() =>
-            //{
-            //    op.SourceSlot.TakeOut(1);
-            //    op.SourceSlot.MarkDirty();
-            //}, "consumefuel");
 
             handling = EnumHandling.PreventDefault;
         }
@@ -228,15 +222,6 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                     }
                 }
 
-                // Block
-                //var block = api?.World.GetBlock(asset);
-
-                //if (block != null)
-                //{
-                //    fuelStacks.AddIfNotPresent(new ItemStack(block));
-                //}
-
-
             }
 
             if (fuelStacks.Count == 0)
@@ -248,7 +233,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             {
                 new WorldInteraction
                 {
-                    ActionLangCode = "awearablelight:heldhelp-fueltypes",
+                    ActionLangCode = "additionalarmorfeatureslibrary:heldhelp-fueltypes",
                     MouseButton = EnumMouseButton.None,
                     Itemstacks = fuelStacks.ToArray()
                 }
@@ -293,15 +278,17 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
         public virtual void ConsumePower(ItemSlot slot, EntityPlayer entityPlayer, double amount)
         {
             if (slot.Empty) return;
-            var attachmentableLight =
+            var powerPiece =
                 slot.Itemstack.Collectible
-                    .GetCollectibleBehavior<CollectibleBehaviorArmorFeatures>(true);
+                    .GetCollectibleBehavior<CollectibleBehaviorPower>(true);
 
-            if (attachmentableLight == null) return;
+            if (powerPiece == null) return;
+
+
             // Only consume while active
-            if (!attachmentableLight.LightState(slot.Itemstack))
+            if (!powerPiece.PowerState(slot.Itemstack))
             {
-                Console.WriteLine("uhoh");
+                Console.WriteLine("Power Off");
                 return;
             }
 
@@ -313,11 +300,21 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             if (fuel <= 0)
             {
-                attachmentableLight.SetLightActive(
+                powerPiece.SetPowerActive(
                     slot,
                     false,
                     entityPlayer
                 );
+
+                //For all the extra passive features that would use power else.
+                if (ArmorFeaturesProp.ReadFrom(slot.Itemstack).FeaturesUsePower)
+                {
+                    slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorLight>(true).SetLightActive(
+                    slot,
+                    false,
+                    entityPlayer
+                );
+                }
             }
         }
 
