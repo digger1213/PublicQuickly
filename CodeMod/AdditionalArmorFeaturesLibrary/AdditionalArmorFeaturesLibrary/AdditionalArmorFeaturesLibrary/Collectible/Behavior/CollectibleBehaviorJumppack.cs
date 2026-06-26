@@ -7,7 +7,9 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.Essentials;
 
 namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 {
@@ -20,6 +22,8 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
         private ICoreAPI? api { get; set; }
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
+
+        public ParticleEmitter particleEmitter = new ParticleEmitter();
 
         public CollectibleBehaviorJumppack(CollectibleObject collObj) : base(collObj)
         {
@@ -90,12 +94,22 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 }
             }
 
+
+            Vec3f eyes = player.Pos.GetViewVector();
+            Console.WriteLine(eyes);
             player.Pos.Motion.Y = (ArmorFeaturesProp.ReadFrom(stack)?.jumpUpwardVel ?? 0) * 0.1;
-            player.Pos.Motion.X = (ArmorFeaturesProp.ReadFrom(stack)?.jumpForwardVel ?? 0) * 0.1;
+            player.Pos.Motion.X = (ArmorFeaturesProp.ReadFrom(stack)?.jumpForwardVel ?? 0) * 0.1 * eyes.X;
+            player.Pos.Motion.Z = (ArmorFeaturesProp.ReadFrom(stack)?.jumpForwardVel ?? 0) * 0.1 * eyes.Z;
 
             //Consumes fuel, only when feature is enabled.
             var fuelbehavior = stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorFuel>(true);
             fuelbehavior.ActionConsumePower(stack, player, ArmorFeaturesProp.ReadFrom(stack).jumpConsumption);
+
+            //Any particles set?
+            if (ArmorFeaturesProp.ReadFrom(stack).particlesList.Length > 0)
+            {
+                particleEmitter.EmitParticles(api, player, stack);
+            }
 
             slot.MarkDirty();
         }

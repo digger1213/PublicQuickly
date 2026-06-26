@@ -9,7 +9,8 @@ namespace AdditionalArmorFeaturesLibrary.Network
         Exstate,
         JumppackActivation,
         Jumppack,
-        Jetpack
+        Jetpack,
+        Nightvision
     }
 
 

@@ -13,6 +13,7 @@ using System.Numerics;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -24,11 +25,9 @@ public sealed class TogglePacket
     public string HotKeyCode { get; set; } = "";
 }
 
-public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
+public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 {
 
-    //To override bug in vanilla -Cry emoji-
-    private Harmony harmonyInstance => new(Mod.Info.ModID);
 
     private static readonly string ConfigServerName = "additionalarmorfeatureslibrary-server.json";
 
@@ -52,6 +51,9 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
     public ConfigSyncSystem? ConfigSync { get; set; }
 
 
+    JetpackSoundHelper jetpackSoundHelper { get; set; } = new JetpackSoundHelper();
+
+
     double lastCheckTotalHours;
 
     //For Jumppack
@@ -59,13 +61,18 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
     private long lastJumpPress;
     private const int DoubleTapWindowMs = 300;
 
+    //For rendering and nightvision
+    public double RenderOrder => 0;
+    public int RenderRange => 1;
+
 
     public override void StartPre(ICoreAPI api)
     {
-        //All to make some lights work...........
-        harmonyInstance.Patch(
-        AccessTools.Method(typeof(EntityBehaviorContainer), nameof(EntityBehaviorContainer.OnTesselation)),
-        postfix: AccessTools.Method(typeof(LightRenderPatch), nameof(LightRenderPatch.OnTesselationPatch)));
+        if (!Harmony.HasAnyPatches(Mod.Info.ModID))
+        {
+            var harmony = new Harmony(Mod.Info.ModID);
+            harmony.PatchAllUncategorized();
+        }
     }
 
     public override void Start(ICoreAPI api)
@@ -96,6 +103,7 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
         api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Exstate", typeof(CollectibleBehaviorExstate));
         api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Jumppack", typeof(CollectibleBehaviorJumppack));
         api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Jetpack", typeof(CollectibleBehaviorJetpack));
+        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Nightvision", typeof(CollectibleBehaviorNightvision));
     }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -106,27 +114,33 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
 
         ClientConfig = new LoadOrCreate().CapiConfig(api, ConfigClientName);
 
-        api.Event.RegisterGameTickListener(_ => CheckDoubleJump(api), 20);
-        api.Event.RegisterGameTickListener(_ => CheckJetPack(api), 20);
+        Capi.Event.RegisterGameTickListener(_ => CheckDoubleJump(Capi), 20);
+        Capi.Event.RegisterGameTickListener(_ => CheckJetPack(Capi), 20);
+
+        Capi.Event.RegisterRenderer(this, EnumRenderStage.Before, "nightvision");
 
         ClientToggleChannel = api.Network
            .RegisterChannel("additionalarmorfeatureslibrarytoggle")
            .RegisterMessageType<AdditionalArmorFeaturesLibraryPacket>();
 
-        api.Input.RegisterHotKey("togglePower", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-power"), GlKeys.P);
-        api.Input.SetHotKeyHandler("togglePower", _ => OnTogglePowerHotkey(api.World.Player));
+        Capi.Input.RegisterHotKey("togglePower", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-power"), GlKeys.P);
+        Capi.Input.SetHotKeyHandler("togglePower", _ => OnTogglePowerHotkey(Capi.World.Player));
 
-        api.Input.RegisterHotKey("toggleLight", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-light"), GlKeys.L);
-        api.Input.SetHotKeyHandler("toggleLight", _ => OnToggleLightHotkey(api.World.Player));
+        Capi.Input.RegisterHotKey("toggleLight", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-light"), GlKeys.L);
+        Capi.Input.SetHotKeyHandler("toggleLight", _ => OnToggleLightHotkey(Capi.World.Player));
 
-        api.Input.RegisterHotKey("toggleExstate", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-exstate"), GlKeys.K);
-        api.Input.SetHotKeyHandler("toggleExstate", _ => OnToggleExstateHotkey(api.World.Player));
+        Capi.Input.RegisterHotKey("toggleExstate", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-exstate"), GlKeys.K);
+        Capi.Input.SetHotKeyHandler("toggleExstate", _ => OnToggleExstateHotkey(Capi.World.Player));
 
-        api.Input.RegisterHotKey("toggleJumppack", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jumppack"), GlKeys.Z);
-        api.Input.SetHotKeyHandler("toggleJumppack", _ => OnToggleJumppackHotkey(api.World.Player));
+        Capi.Input.RegisterHotKey("toggleJumppack", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jumppack"), GlKeys.Z);
+        Capi.Input.SetHotKeyHandler("toggleJumppack", _ => OnToggleJumppackHotkey(Capi.World.Player));
 
-        api.Input.RegisterHotKey("toggleJetpack", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jetpack"), GlKeys.N);
-        api.Input.SetHotKeyHandler("toggleJetpack", _ => OnToggleJetpackHotkey(api.World.Player));
+        Capi.Input.RegisterHotKey("toggleJetpack", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jetpack"), GlKeys.B);
+        Capi.Input.SetHotKeyHandler("toggleJetpack", _ => OnToggleJetpackHotkey(Capi.World.Player));
+
+        Capi.Input.RegisterHotKey("toggleNightvision", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jetpack"), GlKeys.N);
+        Capi.Input.SetHotKeyHandler("toggleNightvision", _ => OnToggleNightvisionHotkey(Capi.World.Player));
+
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -135,19 +149,19 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
 
         Sapi = api;
 
-        ServerToggleChannel = api.Network
+        ServerToggleChannel = Sapi.Network
             .RegisterChannel("additionalarmorfeatureslibrarytoggle")
             .RegisterMessageType<AdditionalArmorFeaturesLibraryPacket>()
             .SetMessageHandler<AdditionalArmorFeaturesLibraryPacket>(OnTogglePacket);
 
-
-        api.Event.PlayerNowPlaying += (player) =>
+        Sapi.Event.PlayerNowPlaying += (player) =>
         {
             ConfigSync?.SendToPlayer(player);
         };
 
-        OnLongServerFuelTick = api.Event.RegisterGameTickListener(OnServerFuelTick, 2000);
-        OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 100);
+        OnLongServerFuelTick = Sapi.Event.RegisterGameTickListener(OnServerFuelTick, 2000);
+        OnLongServerTick = Sapi.Event.RegisterGameTickListener(OnServerTick, 100);
+
     }
 
     //To distinguish between what to toggle.
@@ -158,7 +172,6 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
             case ToggleType.Power:
                 TogglePowerWearableItem(player, packet.ItemSlot);
                 break;
-
             case ToggleType.Light:
                 ToggleLightWearableItem(player, packet.ItemSlot);
                 break;
@@ -174,6 +187,9 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
             case ToggleType.Jetpack:
                 ToggleJetpackWearableItem(player, packet.ItemSlot);
                 break;
+            case ToggleType.Nightvision:
+                ToggleNightvisionWearableItem(player, packet.ItemSlot);
+                break;
         }
     }
 
@@ -184,7 +200,11 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
         ServerToggleChannel = null;
         ClientToggleChannel = null;
 
-        harmonyInstance.UnpatchAll(Mod.Info.ModID);
+        if (Harmony.HasAnyPatches(Mod.Info.ModID))
+        {
+            var harmony = new Harmony(Mod.Info.ModID);
+            harmony.UnpatchAll(harmony.Id);
+        }
     }
 
     private void OnServerTick(float obj)
@@ -230,18 +250,22 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
                     }
                     double Consumption = hoursPassed;
 
-                    //For Each Turned on Passive, Increase Consumption by 1x
-                    if (slot.Itemstack.Attributes.GetBool("togglelight")){ Consumption = hoursPassed*2; }
-
-                    //Consumption for Jetpack
-                    if (slot.Itemstack.Attributes.GetBool("togglejetpack"))
+                    if (ArmorFeaturesProp.ReadFrom(slot.Itemstack).FeaturesUsePower)
                     {
-                        // Only burn extra fuel while actively flying
-                        if (player.Entity.Controls.Jump)
+                        //For Each Turned on Passive, Increase Consumption by 1x
+                        if (slot.Itemstack.Attributes.GetBool("togglelight")) { Consumption = hoursPassed * 2; }
+                        if (slot.Itemstack.Attributes.GetBool("togglenightvision")) { Consumption = hoursPassed * 2; }
+
+                        //Consumption for Jetpack
+                        if (slot.Itemstack.Attributes.GetBool("togglejetpack"))
                         {
-                            Consumption += hoursPassed * (
-                                ArmorFeaturesProp.ReadFrom(slot.Itemstack)?.jetConsumption ?? 0
-                            );
+                            // Only burn extra fuel while actively flying
+                            if (player.Entity.Controls.Jump)
+                            {
+                                Consumption += hoursPassed * (
+                                    ArmorFeaturesProp.ReadFrom(slot.Itemstack)?.jetConsumption ?? 0
+                                );
+                            }
                         }
                     }
 
@@ -263,6 +287,9 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
         var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
         if (invGear == null) return;
 
+        ItemStack activeJetpack = null;
+        bool active = false;
+
         if (flying)
         {
             foreach (ItemSlot slot in invGear)
@@ -275,9 +302,15 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
                 if (jetpack == null) continue;
 
                 jetpack.FlyJetpack(slot, player.Entity);
+
+                active = true;
+                activeJetpack = slot.Itemstack;
             }
         }
+
+        jetpackSoundHelper.ToggleJetpackSounds(api, player.Entity, activeJetpack, active);
     }
+
     //To activate jumppack on double tap.
     private void CheckDoubleJump(ICoreClientAPI api)
     {
@@ -297,6 +330,32 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
         }
 
         wasJumping = jumping;
+    }
+    public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
+    {
+        var player = Capi.World.Player;
+
+        var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
+        if (invGear == null) return;
+
+        foreach (ItemSlot slot in invGear)
+        {
+            if (slot.Empty) continue;
+
+            var nightvis = slot.Itemstack.Collectible
+                .GetCollectibleBehavior<CollectibleBehaviorNightvision>(true);
+
+            if (nightvis == null) continue;
+
+            if (nightvis?.NightvisionState(slot.Itemstack) == true)
+            {
+                Capi.Render.ShaderUniforms.NightVisionStrength = (float)GameMath.Clamp(20, 0, 0.8);
+                return; // Found one active item, we're done.
+            }
+        }
+
+        // No active night vision item was found.
+        Capi.Render.ShaderUniforms.NightVisionStrength = 0;
     }
 
     ///POWER///
@@ -555,6 +614,49 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem
     private bool OnToggleJetpackHotkey(IPlayer player)
     {
         return ToggleJetpackWearableItem(player);
+    }
+
+    ///NIGHT VISION///
+    //No need to sync to server, all client sided.
+    private bool ToggleNightvisionWearableItem(IPlayer player, int itemslot = -1)
+    {
+        Console.WriteLine("Toggling Nightvision");
+        if (player == null) return false;
+
+        var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
+
+        ItemSlot? currentSlot = player.InventoryManager.ActiveHotbarSlot;
+
+        var logger = player.Entity.Api.Logger;
+
+        // Toggle for all worn items.
+        foreach (ItemSlot slot in invGear)
+        {
+            if (slot.Empty) continue;
+
+            var armorPiece = slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorNightvision>(true);
+            if (armorPiece == null) continue;
+
+            var newState = !armorPiece.NightvisionState(slot.Itemstack);
+            armorPiece.SetNightvisionActive(slot, newState, player.Entity);
+
+            slot.MarkDirty();
+        }
+
+        //sync to server.
+        ClientToggleChannel?.SendPacket(
+            new AdditionalArmorFeaturesLibraryPacket
+            {
+                Toggle = ToggleType.Nightvision
+            }
+        );
+
+        return true;
+    }
+
+    private bool OnToggleNightvisionHotkey(IPlayer player)
+    {
+        return ToggleNightvisionWearableItem(player);
     }
 
 

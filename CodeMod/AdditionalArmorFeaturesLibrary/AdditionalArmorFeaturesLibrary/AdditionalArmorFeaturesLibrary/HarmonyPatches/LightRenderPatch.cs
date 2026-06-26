@@ -9,8 +9,10 @@ using Vintagestory.GameContent;
 
 namespace AdditionalArmorFeaturesLibrary.HarmonyPatches
 {
+    [HarmonyPatch(typeof(EntityBehaviorContainer), nameof(EntityBehaviorContainer.OnTesselation))]
     public class LightRenderPatch
     {
+        [HarmonyPostfix]
         public static void OnTesselationPatch(EntityBehaviorContainer __instance, ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements) {
             //__instance.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
             if (__instance.Inventory != null)

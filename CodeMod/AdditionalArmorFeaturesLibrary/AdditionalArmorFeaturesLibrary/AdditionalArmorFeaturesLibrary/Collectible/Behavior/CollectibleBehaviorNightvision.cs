@@ -9,25 +9,19 @@ using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.Server;
-using static AdditionalArmorFeaturesLibrary.Utils.ArmorFeaturesProp;    
 
 namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 {
 
-#nullable enable
-
-    class CollectibleBehaviorJetpack : CollectibleBehavior
+    internal class CollectibleBehaviorNightvision : CollectibleBehavior
     {
-
         private ICoreAPI? api { get; set; }
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
 
         public ParticleEmitter particleEmitter = new ParticleEmitter();
 
-        public CollectibleBehaviorJetpack(CollectibleObject collObj) : base(collObj)
-        {
-        }
+        public CollectibleBehaviorNightvision(CollectibleObject collObj) : base(collObj) { }
 
         public override void OnLoaded(ICoreAPI api)
         {
@@ -36,53 +30,21 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             base.OnLoaded(api);
         }
 
-        public bool JetpackState(ItemStack stack)
+        public bool NightvisionState(ItemStack stack)
         {
-            return stack.Attributes.GetBool("togglejetpack");
+            Console.WriteLine("nightvision trigger");
+            return stack.Attributes.GetBool("togglenightvision");
         }
 
-        public virtual void SetJetpackActive(ItemSlot slot, bool active, EntityPlayer player)
+        public virtual void SetNightvisionActive(ItemSlot slot, bool active, EntityPlayer player)
         {
             if (slot == null || slot.Empty || api == null) return;
 
             ItemStack stack = slot.Itemstack;
 
-            // Update state
-            stack.Attributes.SetBool("togglejetpack", active);
+            stack.Attributes.SetBool("togglenightvision", active);
 
             slot.MarkDirty();
-        }
-
-
-        public virtual void FlyJetpack(ItemSlot slot, EntityPlayer player)
-        {
-            if (slot == null || slot.Empty || api == null) return;
-
-            ItemStack stack = slot.Itemstack;
-            //Toggle required
-            if (!JetpackState(stack)) return;
-
-            //Only if player is holding jump
-            if (!player.Controls.Jump) return;
-
-            var source = stack.Collectible.GetCollectibleInterface<IPowerSource>();
-            if (source == null || !source.HasPower(stack))
-            {
-                return;
-            }
-
-            //Propels person, also limits speed.
-            player.Pos.Motion.Y = Math.Min(player.Pos.Motion.Y + (ArmorFeaturesProp.ReadFrom(stack).jetUpwardVel), ArmorFeaturesProp.ReadFrom(stack).jetMaxUpwardVel);
-
-            //Any particles set?
-            if (ArmorFeaturesProp.ReadFrom(stack).particlesList.Length > 0)
-            {
-                particleEmitter.EmitParticles(api, player, stack);
-            }
-
-
-            //Commented this out because it appears to break animations, hopefully won't cause issues
-            //slot.MarkDirty();
         }
 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)

@@ -41,6 +41,35 @@ namespace AdditionalArmorFeaturesLibrary.Utils
         public double jetUpwardVel = 0.03;
         public double jetConsumption = 0;
 
+        //Particles Customization.
+        public class Argb
+        {
+            public int alpha { get; set; } = 255;
+            public int red { get; set; } = 0;
+            public int green { get; set; } = 0;
+            public int blue { get; set; } = 0;
+        }
+        public class ParticleEntry
+        {
+            public string attachmentPointName { get; set; } = string.Empty;
+            public int particleCount { get; set; } = 0;
+            public Argb color { get; set; }
+            public Vec3f minVelocity { get; set; } = new Vec3f(0.0f, 0.0f, 0.0f);
+            public Vec3f maxVelocity { get; set; } = new Vec3f( 0.0f, 0.0f, 0.0f );
+            public float lifeLength { get; set; } = 1;
+            public float gravity { get; set; } = 0;
+            public float particleSize { get; set; } = 1;
+
+        }
+        public ParticleEntry[] particlesList { get; set; } = Array.Empty<ParticleEntry>();
+
+        //Additional Damage from Armor (Powered)
+        public float damageBonus { get; set; } = 10;
+
+
+
+
+
         public static ArmorFeaturesProp? ReadFrom(ItemStack itemStack)
         {
             if (itemStack == null)
