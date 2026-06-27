@@ -48,7 +48,7 @@ namespace AdditionalArmorFeaturesLibrary.HarmonyPatches
         //DamageInjection runs just after slot.Itemstack.Collectible.GetAttackPower(slot.Itemstack);
         public static void DamageInjection(ref float damage, Entity byEntity, EntityAgent damagedEntity)
         {
-            damage += byEntity.Stats.GetBlended("armorDamageBonus");
+            damage += byEntity.Stats.GetBlended("damageBonus") - 1; //subtract default stat value of 1
 
 
             byEntity.Api.Logger.Debug($"{byEntity.Api.Side} Dealing {damage} from {byEntity.GetName()} to {damagedEntity.GetName()}");
@@ -57,7 +57,7 @@ namespace AdditionalArmorFeaturesLibrary.HarmonyPatches
         //DamageSourceInjection runs just before IMountable im = this.GetInterface<IMountable>();
         public static void DamageSourceInjection(DamageSource damageSource, Entity byEntity, EntityAgent damagedEntity)
         {
-            damageSource.KnockbackStrength += byEntity.Stats.GetBlended("knockbackBonus");
+            damageSource.KnockbackStrength += byEntity.Stats.GetBlended("knockbackBonus") - 1; //subtract default stat value of 1
 
 
             byEntity.Api.Logger.Debug($"{byEntity.Api.Side} Dealing {damageSource.KnockbackStrength} knockback from {byEntity.GetName()} to {damagedEntity.GetName()}");
