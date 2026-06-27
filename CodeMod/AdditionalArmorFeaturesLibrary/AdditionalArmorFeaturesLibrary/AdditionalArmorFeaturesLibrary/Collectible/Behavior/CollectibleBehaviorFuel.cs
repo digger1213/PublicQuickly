@@ -290,7 +290,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             // Only consume while active
             if (!powerPiece.PowerState(slot.Itemstack))
             {
-                Console.WriteLine("Power Off");
+                //Console.WriteLine("Power Off");
                 return;
             }
 

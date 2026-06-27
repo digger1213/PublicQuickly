@@ -10,6 +10,7 @@ using HarmonyLib;
 using ProtoBuf;
 using System;
 using System.Numerics;
+using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -66,6 +67,10 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
     public double RenderOrder => 0;
     public int RenderRange => 1;
 
+    public override double ExecuteOrder()
+    {
+        return -0.01; //apply our event handlers before ModSystemWearableStats, so we can modify stats first
+    }
 
     public override void StartPre(ICoreAPI api)
     {
@@ -105,6 +110,7 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
         api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Jumppack", typeof(CollectibleBehaviorJumppack));
         api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Jetpack", typeof(CollectibleBehaviorJetpack));
         api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Nightvision", typeof(CollectibleBehaviorNightvision));
+        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:CustomStats", typeof(CollectibleBehaviorCustomStats));
     }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -160,7 +166,7 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
             ConfigSync?.SendToPlayer(player);
         };
 
-        api.Event.PlayerNowPlaying += Event_PlayerNowPlaying;
+        api.Event.PlayerJoin += Event_PlayerJoin;
 
         OnLongServerFuelTick = Sapi.Event.RegisterGameTickListener(OnServerFuelTick, 2000);
         OnLongServerTick = Sapi.Event.RegisterGameTickListener(OnServerTick, 100);
@@ -274,14 +280,14 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 
                     source.ConsumePower(slot, player.Entity, Consumption);
 
-                    slot.MarkDirty();
+                    //slot.MarkDirty();
                 }
             }
         }
         lastCheckTotalHours = totalHours;
     }
 
-    private void Event_PlayerNowPlaying(IServerPlayer byPlayer)
+    private void Event_PlayerJoin(IServerPlayer byPlayer)
     {
         IInventory? PlayerInv = byPlayer.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
         PlayerInv.SlotModified += (slotid) => OnGameTick_SlotModified(byPlayer, slotid);
@@ -292,6 +298,8 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
         HandleGearChange(player);
     }
 
+    private Dictionary<int, Dictionary<string, float>> playerArmorStatModifiers = new();
+
     public void HandleGearChange(IPlayer player)
     {
         if (player?.InventoryManager == null) return;
@@ -299,28 +307,49 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
         var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
         if (invGear == null) return;
 
-        float bonusDamage = 0;
-        float bonusKnockback = 0;
         float fallModifier = 1;
+        Dictionary<string, float> totalStats = playerArmorStatModifiers.GetValueOrDefault(player.ClientId) ?? new Dictionary<string, float>();
+
+        foreach(var stat in totalStats)
+        {
+            totalStats[stat.Key] = 0; //reset all stats to 0 and re-sum them
+        }
 
         foreach (var slot in invGear)
         {
             if (slot.Empty) continue;
 
-            var props = ArmorFeaturesProp.ReadFrom(slot.Itemstack);
+            var itemstack = slot.Itemstack;
 
-            if (props != null)
+            var cbCustomStats = itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorCustomStats>(true);
+
+            if (cbCustomStats is null) continue;
+
+            fallModifier += cbCustomStats.GetFallDamageModifier(itemstack);
+
+            var customStats = cbCustomStats.GetStats(itemstack);
+            if (customStats is null) continue;
+
+            foreach(var stat in customStats)
             {
-                bonusDamage += ArmorFeaturesProp.ReadFrom(slot.Itemstack).armorDamageBonus;
-                bonusKnockback += ArmorFeaturesProp.ReadFrom(slot.Itemstack).knockbackBonus;
-                fallModifier += ArmorFeaturesProp.ReadFrom(slot.Itemstack).falldamageModifier;
-                Console.WriteLine("Should get in here once");
+                float currentStat = 0;
+                totalStats.TryGetValue(stat.Key, out currentStat);
+                totalStats[stat.Key] = stat.Value + currentStat;
             }
         }
-        player.Entity.Stats.Set("armorDamageBonus", "armorDamageBonus", bonusDamage, true);
 
-        player.Entity.Stats.Set("knockbackBonus", "knockbackBonus", bonusKnockback, true);
+        foreach(var stat in totalStats)
+        {
+            //player.Entity.Api.Logger.Notification($"Setting stat {stat.Key} with value {stat.Value}");
+            if (stat.Value == 0)
+            {
+                totalStats.Remove(stat.Key);
+                player.Entity.Stats.Remove(stat.Key, "armorlib:armormodifier");
+            }
+            player.Entity.Stats.Set(stat.Key, "armorlib:armormodifier", stat.Value);
+        }
 
+        playerArmorStatModifiers[player.ClientId] = totalStats;
         player.Entity.Properties.FallDamageMultiplier = fallModifier;
     }
 
@@ -557,7 +586,7 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 
             armorPiece.JumpJumppack(slot, player.Entity);
 
-            slot.MarkDirty();
+            //slot.MarkDirty();
         }
 
         //sync to server.

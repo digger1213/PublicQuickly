@@ -32,7 +32,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
         public bool PowerState(ItemStack stack)
         {
-            Console.WriteLine("PowerState trigger");
+            //Console.WriteLine("PowerState trigger");
             return stack.Attributes.GetBool("togglepower");
         }
 
