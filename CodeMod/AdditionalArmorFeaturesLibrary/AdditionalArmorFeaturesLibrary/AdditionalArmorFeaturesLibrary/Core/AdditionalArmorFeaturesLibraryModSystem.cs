@@ -15,6 +15,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Common;
 using Vintagestory.GameContent;
 
 namespace AdditionalArmorFeaturesLibrary;
@@ -159,6 +160,8 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
             ConfigSync?.SendToPlayer(player);
         };
 
+        api.Event.PlayerNowPlaying += Event_PlayerNowPlaying;
+
         OnLongServerFuelTick = Sapi.Event.RegisterGameTickListener(OnServerFuelTick, 2000);
         OnLongServerTick = Sapi.Event.RegisterGameTickListener(OnServerTick, 100);
 
@@ -276,6 +279,49 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
             }
         }
         lastCheckTotalHours = totalHours;
+    }
+
+    private void Event_PlayerNowPlaying(IServerPlayer byPlayer)
+    {
+        IInventory? PlayerInv = byPlayer.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
+        PlayerInv.SlotModified += (slotid) => OnGameTick_SlotModified(byPlayer, slotid);
+    }
+
+    private void OnGameTick_SlotModified(IServerPlayer player, int slotid)
+    {
+        HandleGearChange(player);
+    }
+
+    public void HandleGearChange(IPlayer player)
+    {
+        if (player?.InventoryManager == null) return;
+
+        var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
+        if (invGear == null) return;
+
+        float bonusDamage = 0;
+        float bonusKnockback = 0;
+        float fallModifier = 1;
+
+        foreach (var slot in invGear)
+        {
+            if (slot.Empty) continue;
+
+            var props = ArmorFeaturesProp.ReadFrom(slot.Itemstack);
+
+            if (props != null)
+            {
+                bonusDamage += ArmorFeaturesProp.ReadFrom(slot.Itemstack).armorDamageBonus;
+                bonusKnockback += ArmorFeaturesProp.ReadFrom(slot.Itemstack).knockbackBonus;
+                fallModifier += ArmorFeaturesProp.ReadFrom(slot.Itemstack).falldamageModifier;
+                Console.WriteLine("Should get in here once");
+            }
+        }
+        player.Entity.Stats.Set("armorDamageBonus", "armorDamageBonus", bonusDamage, true);
+
+        player.Entity.Stats.Set("knockbackBonus", "knockbackBonus", bonusKnockback, true);
+
+        player.Entity.Properties.FallDamageMultiplier = fallModifier;
     }
 
     //Checks for jetpack flight.
