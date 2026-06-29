@@ -1,4 +1,5 @@
-﻿using AdditionalArmorFeaturesLibrary.Utils;
+﻿using AdditionalArmorFeaturesLibrary.Collectible.Behavior;
+using AdditionalArmorFeaturesLibrary.Utils;
 using System;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -11,12 +12,14 @@ namespace AdditionalArmorFeaturesLibrary.Items
     {
         public override byte[] GetLightHsv(IBlockAccessor blockAccessor, BlockPos pos, ItemStack stack)
         {
+            var stackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorLight>();
+
             if (!stack.Attributes.GetBool("togglelight"))
             {
                 return new byte[] { 0, 0, 0 };
             }
 
-            return ArmorFeaturesProp.ReadFrom(stack)?.lightHSV
+            return stackBehavior.lightHSV
                 ?? new byte[] { 0, 0, 0 };
         }
 

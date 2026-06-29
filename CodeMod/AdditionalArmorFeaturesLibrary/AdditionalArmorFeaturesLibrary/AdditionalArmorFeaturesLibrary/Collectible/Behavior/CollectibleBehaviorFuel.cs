@@ -140,7 +140,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                         this,
                         "Itemfull",
                         Lang.Get(
-                            "additionalarmorfeatureslibrary:ingameerror-item-full",
+                            "armorlib:ingameerror-item-full",
                             sinkStack.Collectible.GetHeldItemName(sinkStack)
                         )
                     );
@@ -179,7 +179,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             dsc.AppendLine();
             dsc.AppendLine();
 
-            dsc.AppendLine(Lang.Get("additionalarmorfeatureslibrary:fuel-hours", fuel, capfuel));
+            dsc.AppendLine(Lang.Get("armorlib:fuel-hours", fuel, capfuel));
 
         }
 
@@ -234,7 +234,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             {
                 new WorldInteraction
                 {
-                    ActionLangCode = "additionalarmorfeatureslibrary:heldhelp-fueltypes",
+                    ActionLangCode = "armorlib:heldhelp-fueltypes",
                     MouseButton = EnumMouseButton.None,
                     Itemstacks = fuelStacks.ToArray()
                 }

@@ -13,7 +13,6 @@ namespace AdditionalArmorFeaturesLibrary.Utils
 
         //Current Stats
         //Music vars.
-        public string? lightSoundPath { get; set; }
         public string? powerSoundPath { get; set; }
         public string? exstateSoundPath { get; set; }
         public string? jumppackSoundPath { get; set; }
@@ -27,9 +26,6 @@ namespace AdditionalArmorFeaturesLibrary.Utils
         public bool? UseFuel { get; set; }
         public bool? OnCraftedFueled { get; set; }
         public Dictionary<string, float> FuelList { get; set; } = new();
-
-        //Light var.
-        public byte[] lightHSV { get; set; } = new byte[0];
 
         //Jumppack Var.
         public double jumpForwardVel = 0;
@@ -62,13 +58,6 @@ namespace AdditionalArmorFeaturesLibrary.Utils
 
         }
         public ParticleEntry[] particlesList { get; set; } = Array.Empty<ParticleEntry>();
-
-        //Additional Damage from Armor (Powered)
-        public float armorDamageBonus { get; set; } = 0;
-        public float knockbackBonus { get; set; } = 0;
-        public float falldamageModifier { get; set; } = 0;
-
-
 
 
 
@@ -119,9 +108,6 @@ namespace AdditionalArmorFeaturesLibrary.Utils
         public void Merge(ArmorFeaturesProp other)
         {
             if (other == null) return;
-
-            if (!string.IsNullOrEmpty(other.lightSoundPath))
-                lightSoundPath = other.lightSoundPath;
 
             if (other.fuelCapacity.HasValue)
                 fuelCapacity = other.fuelCapacity;

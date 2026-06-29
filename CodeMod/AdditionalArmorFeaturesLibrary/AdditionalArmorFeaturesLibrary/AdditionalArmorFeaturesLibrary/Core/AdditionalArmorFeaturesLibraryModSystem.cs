@@ -31,9 +31,9 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 {
 
 
-    private static readonly string ConfigServerName = "additionalarmorfeatureslibrary-server.json";
+    private static readonly string ConfigServerName = "armorlib:-server.json";
 
-    private static readonly string ConfigClientName = "additionalarmorfeatureslibrary-client.json";
+    private static readonly string ConfigClientName = "armorlib:-client.json";
 
     public static Server? ServerConfig { get; set; }
 
@@ -103,14 +103,14 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 
         api.RegisterItemClass("additionalfeatures", typeof(ItemAdditionalFeatures));
 
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Power", typeof(CollectibleBehaviorPower));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Light", typeof(CollectibleBehaviorLight));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Fuel", typeof(CollectibleBehaviorFuel));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Exstate", typeof(CollectibleBehaviorExstate));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Jumppack", typeof(CollectibleBehaviorJumppack));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Jetpack", typeof(CollectibleBehaviorJetpack));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:Nightvision", typeof(CollectibleBehaviorNightvision));
-        api.RegisterCollectibleBehaviorClass("additionalarmorfeatureslibrary:CustomStats", typeof(CollectibleBehaviorCustomStats));
+        api.RegisterCollectibleBehaviorClass("armorlib:Power", typeof(CollectibleBehaviorPower));
+        api.RegisterCollectibleBehaviorClass("armorlib:Light", typeof(CollectibleBehaviorLight));
+        api.RegisterCollectibleBehaviorClass("armorlib:Fuel", typeof(CollectibleBehaviorFuel));
+        api.RegisterCollectibleBehaviorClass("armorlib:Exstate", typeof(CollectibleBehaviorExstate));
+        api.RegisterCollectibleBehaviorClass("armorlib:Jumppack", typeof(CollectibleBehaviorJumppack));
+        api.RegisterCollectibleBehaviorClass("armorlib:Jetpack", typeof(CollectibleBehaviorJetpack));
+        api.RegisterCollectibleBehaviorClass("armorlib:Nightvision", typeof(CollectibleBehaviorNightvision));
+        api.RegisterCollectibleBehaviorClass("armorlib:CustomStats", typeof(CollectibleBehaviorCustomStats));
     }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -127,25 +127,25 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
         Capi.Event.RegisterRenderer(this, EnumRenderStage.Before, "nightvision");
 
         ClientToggleChannel = api.Network
-           .RegisterChannel("additionalarmorfeatureslibrarytoggle")
+           .RegisterChannel("armorlib:toggle")
            .RegisterMessageType<AdditionalArmorFeaturesLibraryPacket>();
 
-        Capi.Input.RegisterHotKey("togglePower", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-power"), GlKeys.P);
+        Capi.Input.RegisterHotKey("togglePower", Lang.Get("armorlib:keybind-activeslot-description-power"), GlKeys.P);
         Capi.Input.SetHotKeyHandler("togglePower", _ => OnTogglePowerHotkey(Capi.World.Player));
 
-        Capi.Input.RegisterHotKey("toggleLight", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-light"), GlKeys.L);
+        Capi.Input.RegisterHotKey("toggleLight", Lang.Get("armorlib:keybind-activeslot-description-light"), GlKeys.L);
         Capi.Input.SetHotKeyHandler("toggleLight", _ => OnToggleLightHotkey(Capi.World.Player));
 
-        Capi.Input.RegisterHotKey("toggleExstate", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-exstate"), GlKeys.K);
+        Capi.Input.RegisterHotKey("toggleExstate", Lang.Get("armorlib:keybind-activeslot-description-exstate"), GlKeys.K);
         Capi.Input.SetHotKeyHandler("toggleExstate", _ => OnToggleExstateHotkey(Capi.World.Player));
 
-        Capi.Input.RegisterHotKey("toggleJumppack", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jumppack"), GlKeys.Z);
+        Capi.Input.RegisterHotKey("toggleJumppack", Lang.Get("armorlib:keybind-activeslot-description-jumppack"), GlKeys.Z);
         Capi.Input.SetHotKeyHandler("toggleJumppack", _ => OnToggleJumppackHotkey(Capi.World.Player));
 
-        Capi.Input.RegisterHotKey("toggleJetpack", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jetpack"), GlKeys.B);
+        Capi.Input.RegisterHotKey("toggleJetpack", Lang.Get("armorlib:keybind-activeslot-description-jetpack"), GlKeys.B);
         Capi.Input.SetHotKeyHandler("toggleJetpack", _ => OnToggleJetpackHotkey(Capi.World.Player));
 
-        Capi.Input.RegisterHotKey("toggleNightvision", Lang.Get("additionalarmorfeatureslibrary:keybind-activeslot-description-jetpack"), GlKeys.N);
+        Capi.Input.RegisterHotKey("toggleNightvision", Lang.Get("armorlib:keybind-activeslot-description-jetpack"), GlKeys.N);
         Capi.Input.SetHotKeyHandler("toggleNightvision", _ => OnToggleNightvisionHotkey(Capi.World.Player));
 
     }
@@ -157,7 +157,7 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
         Sapi = api;
 
         ServerToggleChannel = Sapi.Network
-            .RegisterChannel("additionalarmorfeatureslibrarytoggle")
+            .RegisterChannel("armorlib:toggle")
             .RegisterMessageType<AdditionalArmorFeaturesLibraryPacket>()
             .SetMessageHandler<AdditionalArmorFeaturesLibraryPacket>(OnTogglePacket);
 

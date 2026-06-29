@@ -44,7 +44,7 @@ namespace AdditionalArmorFeaturesLibrary.Network
         private IServerNetworkChannel? serverChannel;
         private IClientNetworkChannel? clientChannel;
 
-        private string ConfigServerName = "additionalarmorfeatureslibrary-server.json";
+        private string ConfigServerName = "armorlib:-server.json";
 
         private DateTime lastConfigWriteTime;
         private readonly string configPath;
@@ -67,14 +67,14 @@ namespace AdditionalArmorFeaturesLibrary.Network
             if (api.Side == EnumAppSide.Server)
             {
                 serverChannel = (api as ICoreServerAPI)?.Network
-                    .RegisterChannel("additionalarmorfeatureslibrary_config")
+                    .RegisterChannel("armorlib:_config")
                     .RegisterMessageType<ServerConfigPacket>();
             }
 
             if (api.Side == EnumAppSide.Client)
             {
                 clientChannel = (api as ICoreClientAPI)?.Network
-                    .RegisterChannel("additionalarmorfeatureslibrary_config")
+                    .RegisterChannel("armorlib:_config")
                     .RegisterMessageType<ServerConfigPacket>()
                     .SetMessageHandler<ServerConfigPacket>(OnConfigPacketReceived);
             }
@@ -117,7 +117,7 @@ namespace AdditionalArmorFeaturesLibrary.Network
                     }
                 }
             }
-            api.Logger.Debug("[additionalarmorfeatureslibrary_config] Config reloaded");
+            api.Logger.Debug("[armorlib:_config] Config reloaded");
         }
 
         public void SendToPlayer(IServerPlayer player)

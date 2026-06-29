@@ -23,7 +23,7 @@ namespace AdditionalArmorFeaturesLibrary.HarmonyPatches
                     {
                         byte[] hsv = slot.Itemstack.Collectible.GetLightHsv(__instance.entity.World.BlockAccessor, null, slot.Itemstack);
 
-                        return hsv?[2] ?? 0;
+                        return hsv is { Length: > 0 } ? hsv[2] : 0;
                     }
                     return 0;
                 });

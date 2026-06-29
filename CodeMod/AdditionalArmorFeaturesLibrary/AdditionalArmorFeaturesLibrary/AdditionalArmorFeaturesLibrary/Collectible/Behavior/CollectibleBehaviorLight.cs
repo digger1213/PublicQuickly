@@ -1,5 +1,6 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
 using AdditionalArmorFeaturesLibrary.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -15,21 +16,36 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
     class CollectibleBehaviorLight : CollectibleBehavior
     {
-
         private ICoreAPI? api { get; set; }
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
 
+
+        [JsonProperty]
+        public bool RequiresPower { get; set; } = true;
+        [JsonProperty]
+        public string? lightSoundPath { get; set; }
+        [JsonProperty]
+        public byte[] lightHSV { get; set; } = new byte[] { 0, 0, 0 };
+
         public CollectibleBehaviorLight(CollectibleObject collObj) : base(collObj)
         {
         }
-
-        public override void OnLoaded(ICoreAPI api)
+        public override void Initialize(JsonObject properties)
         {
-            this.api = api;
-
-            base.OnLoaded(api);
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
         }
+
+        //public override void OnLoaded(ICoreAPI api)
+        //{
+        //    this.api = api;
+
+        //    base.OnLoaded(api);
+        //}
 
         public bool LightState(ItemStack stack)
         {
@@ -40,14 +56,15 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
         public virtual void SetLightActive(ItemSlot slot, bool active, EntityPlayer player)
         {
             Console.WriteLine("SetLightActive");
-            if (slot == null || slot.Empty || api == null) return;
+            if (slot == null || slot.Empty) return;
 
             ItemStack stack = slot.Itemstack;
+            var stackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorLight>();
 
             bool hasFuel = collObj.GetCollectibleInterface<IPowerSource>()?.HasPower(stack) ?? false;
 
             // Only block activation if no fuel
-            if (active && !hasFuel && (ArmorFeaturesProp.ReadFrom(stack).UseFuel ?? false) && ArmorFeaturesProp.ReadFrom(stack).FeaturesUsePower)
+            if (active && !hasFuel && (ArmorFeaturesProp.ReadFrom(stack).UseFuel ?? false) && stackBehavior.RequiresPower)
             {
                 if (api?.Side == EnumAppSide.Client)
                 {
@@ -68,7 +85,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             //If light is on, have ability to turn it off still (for auto turn off)
             if (!stack.Attributes.GetBool("togglelight")){
                 //When armor is off and features require power, it doesn't turn on.
-                if (ArmorFeaturesProp.ReadFrom(stack).FeaturesUsePower && !stack.Attributes.GetBool("togglepower")){ 
+                if (stackBehavior.RequiresPower && !stack.Attributes.GetBool("togglepower")){ 
                     return;
                 }
             }
@@ -77,7 +94,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             // Play toggle sound
             if (player != null)
             {
-                string soundPath = ArmorFeaturesProp.ReadFrom(stack)?.lightSoundPath ?? string.Empty;
+                string soundPath = stackBehavior.lightSoundPath ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(soundPath))
                 {
@@ -103,12 +120,19 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
         public virtual void ToggleLightHsv(ItemStack itemStack)
         {
+            var stackBehavior = itemStack.Collectible.GetBehavior<CollectibleBehaviorLight>();
+
+            Console.WriteLine(stackBehavior.lightSoundPath);
             //If the Toggle light is turned on, go in.
             if (itemStack.Attributes.GetBool("togglelight"))
             { //Check if the value actually exists.
-                if (ArmorFeaturesProp.ReadFrom(itemStack).lightHSV.Length > 0)
+                if (stackBehavior.lightHSV.Length > 0)
                 {//set LightHsv of item to the custom LightHSV variable.
-                    itemStack.Collectible.LightHsv = ArmorFeaturesProp.ReadFrom(itemStack).lightHSV;
+                    itemStack.Collectible.LightHsv = stackBehavior.lightHSV;
+                }
+                else
+                {
+                    itemStack.Collectible.LightHsv = new byte[] { 0, 0, 0 };
                 }
             }
             else
@@ -137,5 +161,22 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 }
             }.Append(base.GetHeldInteractionHelp(inSlot, ref handling));
         }
+            
+        public virtual byte[] GetCustomLightHsv(ItemStack item)
+        {
+            if (!RequiresPower) return lightHSV;
+
+            //check for power
+            var behaviorPower = item.Collectible.GetCollectibleBehavior<CollectibleBehaviorPower>(true);
+            if (behaviorPower == null || !behaviorPower.PowerState(item)) return new byte[] { 0, 0, 0 };
+
+            return lightHSV;
+        }
+
+        public virtual string GetLightSoundPath(ItemStack item)
+        {
+            return lightSoundPath;
+        }
+
     }
 }
