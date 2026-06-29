@@ -9,8 +9,9 @@ using AdditionalArmorFeaturesLibrary.Utils;
 using HarmonyLib;
 using ProtoBuf;
 using System;
-using System.Numerics;
+using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -47,8 +48,9 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
     private ICoreClientAPI? Capi { get; set; }
 
     private IClientNetworkChannel? ClientToggleChannel { get; set; }
-
     private IServerNetworkChannel? ServerToggleChannel { get; set; }
+    public IClientNetworkChannel? ClientFuelChannel { get; set; }
+    public IServerNetworkChannel? ServerFuelChannel { get; set; }
 
     public ConfigSyncSystem? ConfigSync { get; set; }
 
@@ -130,6 +132,8 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
            .RegisterChannel("armorlib:toggle")
            .RegisterMessageType<AdditionalArmorFeaturesLibraryPacket>();
 
+        ClientFuelChannel = api.Network.RegisterChannel("armorlibfuel").RegisterMessageType<FuelSyncPacket>().SetMessageHandler<FuelSyncPacket>(FuelSync);
+
         Capi.Input.RegisterHotKey("togglePower", Lang.Get("armorlib:keybind-activeslot-description-power"), GlKeys.P);
         Capi.Input.SetHotKeyHandler("togglePower", _ => OnTogglePowerHotkey(Capi.World.Player));
 
@@ -160,6 +164,9 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
             .RegisterChannel("armorlib:toggle")
             .RegisterMessageType<AdditionalArmorFeaturesLibraryPacket>()
             .SetMessageHandler<AdditionalArmorFeaturesLibraryPacket>(OnTogglePacket);
+
+        ServerFuelChannel = api.Network.RegisterChannel("armorlibfuel").RegisterMessageType<FuelSyncPacket>();
+
 
         Sapi.Event.PlayerNowPlaying += (player) =>
         {
@@ -216,6 +223,20 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
         }
     }
 
+    public void FuelSync(FuelSyncPacket packet)
+    {
+        var clientPlayer = Capi?.World?.Player;
+
+        if (clientPlayer != null)
+        {
+            var slot = clientPlayer.InventoryManager.GetInventory(packet.InvClass)?[packet.IdSlot];
+
+            if (slot == null || slot.Empty) return;
+
+            slot.Itemstack.Collectible.GetCollectibleInterface<IPowerSource>()?.SetPower(slot.Itemstack, packet.FuelHours);
+        }
+    }
+
     private void OnServerTick(float obj)
     {
         if (Sapi == null) return;
@@ -248,39 +269,52 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 
                 foreach (ItemSlot slot in invGear)
                 {
+                    ItemStack stack = slot.Itemstack;
                     if (slot == null || slot.Empty) continue;
 
-                    var source = slot.Itemstack.Collectible.GetCollectibleInterface<IPowerSource>();
+                    var source = stack.Collectible.GetCollectibleInterface<IPowerSource>();
                     if (source == null) continue;
 
-                    if (!(ArmorFeaturesProp.ReadFrom(slot.Itemstack)?.UseFuel ?? false))
+                    var stackFuelBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
+                    if (stackFuelBehavior?.UseFuel == true)
                     {
                         continue;
                     }
                     double Consumption = hoursPassed;
 
-                    if (ArmorFeaturesProp.ReadFrom(slot.Itemstack).FeaturesUsePower)
-                    {
-                        //For Each Turned on Passive, Increase Consumption by 1x
-                        if (slot.Itemstack.Attributes.GetBool("togglelight")) { Consumption = hoursPassed * 2; }
-                        if (slot.Itemstack.Attributes.GetBool("togglenightvision")) { Consumption = hoursPassed * 2; }
+                    //Add all consumptions.
 
-                        //Consumption for Jetpack
+                    //For Each Turned on Passive, Increase Consumption by 1x
+                    var lightBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorLight>();
+                    if (lightBehavior.RequiresPower)
+                    {
+                        if (slot.Itemstack.Attributes.GetBool("togglelight")) { Consumption = hoursPassed * 2; }
+                    }
+
+                    var nightvisBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorNightvision>();
+                    if (nightvisBehavior.RequiresPower)
+                    {
+                        if (slot.Itemstack.Attributes.GetBool("togglenightvision")) { Consumption = hoursPassed * 2; }
+                    }
+
+
+                    //Consumption for Jetpack
+                    var jetpackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorJetpack>();
+                    if (jetpackBehavior.RequiresPower)
+                    {
                         if (slot.Itemstack.Attributes.GetBool("togglejetpack"))
                         {
                             // Only burn extra fuel while actively flying
                             if (player.Entity.Controls.Jump)
                             {
                                 Consumption += hoursPassed * (
-                                    ArmorFeaturesProp.ReadFrom(slot.Itemstack)?.jetConsumption ?? 0
+                                    jetpackBehavior.jetConsumption
                                 );
                             }
                         }
                     }
 
                     source.ConsumePower(slot, player.Entity, Consumption);
-
-                    //slot.MarkDirty();
                 }
             }
         }
@@ -302,6 +336,7 @@ public partial class AdditionalArmorFeaturesLibrarySystem : ModSystem, IRenderer
 
     public void HandleGearChange(IPlayer player)
     {
+        Console.WriteLine("We don't want this spammed");
         if (player?.InventoryManager == null) return;
 
         var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);

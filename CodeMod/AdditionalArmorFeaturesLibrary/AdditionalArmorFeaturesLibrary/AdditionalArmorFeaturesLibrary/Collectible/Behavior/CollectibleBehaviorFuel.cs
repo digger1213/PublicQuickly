@@ -1,6 +1,7 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
-using AdditionalArmorFeaturesLibrary.Util;
 using AdditionalArmorFeaturesLibrary.Utils;
+using AdditionalArmorFeaturesLibrary.Network;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.API.Server;
 
 namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
@@ -21,10 +23,33 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
 #nullable enable
         private ICoreAPI? api { get; set; }
+        public AdditionalArmorFeaturesLibrarySystem? NetWorkHandler { get; set; }
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
 
+        [JsonProperty]
+        public string PowerType { get; set; } = "fuel";
+        [JsonProperty]
+        public float? fuelCapacity;
+        [JsonProperty]
+        public bool? UseFuel { get; set; }
+        [JsonProperty]
+        public bool? OnCraftedFueled { get; set; }
+        [JsonProperty]
+        public Dictionary<string, float> FuelList { get; set; } = new();
+
         public CollectibleBehaviorFuel(CollectibleObject collObj) : base(collObj) { }
+
+       
+
+        public override void Initialize(JsonObject properties)
+        {
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
+        }
 
         public override void OnLoaded(ICoreAPI api)
         {
@@ -32,7 +57,10 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             _ = collObj.Attributes;
 
+            NetWorkHandler = api.ModLoader.GetModSystem<AdditionalArmorFeaturesLibrarySystem>();
+
             base.OnLoaded(api);
+
         }
 
         private void SetFuelOnCrafted(ItemSlot slot)
@@ -55,7 +83,8 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             if (!(outputSlot is DummySlot))
             {
                 ItemStack itemStack = outputSlot.Itemstack;
-                if ((ArmorFeaturesProp.ReadFrom(itemStack)?.OnCraftedFueled ?? false))
+                var fuelBehavior = itemStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
+                if (fuelBehavior.OnCraftedFueled ?? false)
                 {
                     SetFuelOnCrafted(outputSlot);
                 }
@@ -64,9 +93,11 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
         public override int GetMergableQuantity(ItemStack sinkStack, ItemStack sourceStack, EnumMergePriority priority, ref EnumHandling handling)
         {
+            var sinkFuelBehavior = sinkStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
+            var sourceFuelBehavior = sourceStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
             if (priority == EnumMergePriority.DirectMerge)
             {
-                if (!(ArmorFeaturesProp.ReadFrom(sinkStack)?.UseFuel ?? false) )
+                if (!(sinkFuelBehavior?.UseFuel ?? false) )
                 {
                     return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
                 }
@@ -82,7 +113,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
                 handling = EnumHandling.PreventDefault;
 
-            if (fuelHours >= (ArmorFeaturesProp.ReadFrom(sinkStack)?.fuelCapacity ?? 0f))
+            if (fuelHours >= (sinkFuelBehavior?.fuelCapacity ?? 0f))
                 {
                     Console.WriteLine("You still have " + sinkStack.Attributes.GetDouble("fuelHours", 0) +  " fuel left");
                     return 0;
@@ -109,6 +140,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             ItemStack sourceStack = op.SourceSlot.Itemstack;
             ItemStack sinkStack = op.SinkSlot.Itemstack;
+            var sinkFuelBehavior = sinkStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
 
             if (sourceStack == null || sinkStack == null)
             {
@@ -116,7 +148,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 return;
             }
 
-            if (!(ArmorFeaturesProp.ReadFrom(sinkStack)?.UseFuel ?? false))
+            if ((sinkFuelBehavior?.UseFuel ?? false))
             {
                 handling = EnumHandling.PassThrough;
                 return;
@@ -132,7 +164,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             double fuelHours = GetPower(sinkStack);
 
-            if (fuelHours >= (ArmorFeaturesProp.ReadFrom(sinkStack)?.fuelCapacity ?? 0f))
+            if (fuelHours >= (sinkFuelBehavior?.fuelCapacity ?? 0f))
             {
                 if (api?.Side == EnumAppSide.Client)
                 {
@@ -164,16 +196,17 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             if (inSlot == null || inSlot.Empty) return;
 
             ItemStack itemStack = inSlot.Itemstack;
+            var stackBehavior = itemStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
 
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
 
-            if (!(ArmorFeaturesProp.ReadFrom(itemStack)?.UseFuel ?? false))
+            if (!(stackBehavior?.UseFuel ?? false))
             {
                 return;
             }
 
             var fuel = GetPower(itemStack).ToString("0.0");
-            var capfuel = (ArmorFeaturesProp.ReadFrom(itemStack)?.fuelCapacity ?? 0f).ToString("0.0");
+            var capfuel = (stackBehavior?.fuelCapacity ?? 0f).ToString("0.0");
 
 
             dsc.AppendLine();
@@ -188,15 +221,16 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             if (inSlot.Empty) return base.GetHeldInteractionHelp(inSlot, ref handling);
 
             ItemStack itemStack = inSlot.Itemstack;
+            var stackBehavior = itemStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
 
-            if ((ArmorFeaturesProp.ReadFrom(itemStack).UseFuel ?? false) == false || ArmorFeaturesProp.ReadFrom(itemStack).FuelList == null || ArmorFeaturesProp.ReadFrom(itemStack).FuelList.Count == 0)
+            if ((stackBehavior?.UseFuel ?? false) == false || stackBehavior?.FuelList == null || stackBehavior?.FuelList.Count == 0)
             {
                 return base.GetHeldInteractionHelp(inSlot, ref handling);
             }
 
             List<ItemStack> fuelStacks = new();
 
-            foreach (var fuel in ArmorFeaturesProp.ReadFrom(itemStack).FuelList)
+            foreach (var fuel in stackBehavior.FuelList)
             {
                 string key = fuel.Key;
                 if (string.IsNullOrEmpty(key)) continue;
@@ -246,13 +280,15 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
         {
             if (sourceStack == null || sinkStack == null) return 0f;
 
-            if (!(ArmorFeaturesProp.ReadFrom(sinkStack)?.UseFuel ?? false)) return 0f;
+            var sinkStackBehavior = sinkStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
 
-            if (ArmorFeaturesProp.ReadFrom(sinkStack).FuelList == null || ArmorFeaturesProp.ReadFrom(sinkStack).FuelList.Count == 0) return 0f;
+            if (!(sinkStackBehavior?.UseFuel ?? false)) return 0f;
+
+            if (sinkStackBehavior?.FuelList == null || sinkStackBehavior?.FuelList.Count == 0) return 0f;
 
             AssetLocation sourceCode = sourceStack.Collectible.Code;
 
-            foreach (var (code, value) in ArmorFeaturesProp.ReadFrom(sinkStack).FuelList)
+            foreach (var (code, value) in sinkStackBehavior.FuelList)
             {
                 if (WildcardUtil.Match(new(code), sourceCode))
                 {
@@ -273,16 +309,20 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
         {
             if (sourceStack == null) return;
             Console.WriteLine("Gets in SetPower");
-            sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, ArmorFeaturesProp.ReadFrom(sourceStack)?.fuelCapacity ?? 0f));
+            var sourceSinkStackBehavior = sourceStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
+
+            sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, sourceSinkStackBehavior?.fuelCapacity ?? 0f));
         }
 
         //Main fuel consumption. Usually constant.
-        public virtual void ConsumePower(ItemSlot slot, EntityPlayer entityPlayer, double amount)
+        public virtual void ConsumePower(ItemSlot slot, EntityPlayer player, double amount)
         {
             if (slot.Empty) return;
             var powerPiece =
                 slot.Itemstack.Collectible
                     .GetCollectibleBehavior<CollectibleBehaviorPower>(true);
+
+            ItemStack stack = slot.Itemstack;
 
             if (powerPiece == null) return;
 
@@ -294,27 +334,33 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 return;
             }
 
-            double fuel = GetPower(slot.Itemstack);
+            double fuel = GetPower(stack);
 
-            SetPower(slot.Itemstack, fuel - amount);
+            SetPower(stack, fuel - amount);
 
-            fuel = GetPower(slot.Itemstack);
+            fuel = GetPower(stack);
+
+            var fuelSyncPacket =  new FuelSyncPacket() { FuelHours = fuel, IdSlot = slot.Inventory.GetSlotId(slot), InvClass = slot.Inventory.InventoryID };
+
+            NetWorkHandler?.ServerFuelChannel?.SendPacket(fuelSyncPacket, player as IServerPlayer);
 
             if (fuel <= 0)
             {
                 powerPiece.SetPowerActive(
                     slot,
                     false,
-                    entityPlayer
+                    player
                 );
 
+
+                var lightBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorLight>();
                 //For all the extra passive features that would use power else.
-                if (ArmorFeaturesProp.ReadFrom(slot.Itemstack).FeaturesUsePower)
+                if (lightBehavior.RequiresPower)
                 {
-                    slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorLight>(true).SetLightActive(
+                    stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorLight>(true).SetLightActive(
                     slot,
                     false,
-                    entityPlayer
+                    player
                 );
                 }
             }
@@ -327,13 +373,6 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             var powerPiece = stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorPower>(true);
 
             if (powerPiece == null) return;
-
-
-            // Only consume while active if it uses power
-            if (ArmorFeaturesProp.ReadFrom(stack).FeaturesUsePower)
-            {
-                return;
-            }
 
             double fuel = GetPower(stack);
 
@@ -362,7 +401,8 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
         public virtual bool IsFull(ItemStack sourceStack)
         {
-            return GetPower(sourceStack) >= (ArmorFeaturesProp.ReadFrom(sourceStack)?.fuelCapacity ?? 0f);
+            var stackBehavior = sourceStack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
+            return GetPower(sourceStack) >= (stackBehavior?.fuelCapacity ?? 0f);
         }
     }
 }

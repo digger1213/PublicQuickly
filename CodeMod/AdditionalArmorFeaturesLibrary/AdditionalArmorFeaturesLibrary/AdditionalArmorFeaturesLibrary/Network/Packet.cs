@@ -24,4 +24,17 @@ namespace AdditionalArmorFeaturesLibrary.Network
         public ToggleType Toggle { get; set; }
 
     }
+
+    [ProtoContract]
+    public sealed class FuelSyncPacket
+    {
+        [ProtoMember(1)]
+        public double FuelHours;
+
+        [ProtoMember(2)]
+        public string InvClass;
+
+        [ProtoMember(3)]
+        public int IdSlot;
+    }
 }

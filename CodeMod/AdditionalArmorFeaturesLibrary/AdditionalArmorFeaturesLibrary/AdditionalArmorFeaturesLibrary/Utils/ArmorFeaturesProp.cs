@@ -10,57 +10,6 @@ namespace AdditionalArmorFeaturesLibrary.Utils
 {
     public class ArmorFeaturesProp
     {
-
-        //Current Stats
-        //Music vars.
-        public string? powerSoundPath { get; set; }
-        public string? exstateSoundPath { get; set; }
-        public string? jumppackSoundPath { get; set; }
-        public string? jetpackSoundPath { get; set; }
-
-        //Power vars.
-        public bool FeaturesUsePower { get; set; } = false;
-
-        public float? fuelCapacity;
-        public string PowerType { get; set; } = "fuel";
-        public bool? UseFuel { get; set; }
-        public bool? OnCraftedFueled { get; set; }
-        public Dictionary<string, float> FuelList { get; set; } = new();
-
-        //Jumppack Var.
-        public double jumpForwardVel = 0;
-        public double jumpUpwardVel = 0;
-        public double jumpDelay = 0;
-        public double jumpConsumption = 0;
-        //Jetpack Var.
-        public double jetMaxUpwardVel = 0.25;
-        public double jetUpwardVel = 0.03;
-        public double jetConsumption = 0;
-
-        //Particles Customization.
-        public class Argb
-        {
-            public int alpha { get; set; } = 255;
-            public int red { get; set; } = 0;
-            public int green { get; set; } = 0;
-            public int blue { get; set; } = 0;
-        }
-        public class ParticleEntry
-        {
-            public string attachmentPointName { get; set; } = string.Empty;
-            public int particleCount { get; set; } = 0;
-            public Argb color { get; set; }
-            public Vec3f minVelocity { get; set; } = new Vec3f(0.0f, 0.0f, 0.0f);
-            public Vec3f maxVelocity { get; set; } = new Vec3f(0.0f, 0.0f, 0.0f);
-            public float lifeLength { get; set; } = 1;
-            public float gravity { get; set; } = 0;
-            public float particleSize { get; set; } = 1;
-
-        }
-        public ParticleEntry[] particlesList { get; set; } = Array.Empty<ParticleEntry>();
-
-
-
         public static ArmorFeaturesProp? ReadFrom(ItemStack itemStack)
         {
             if (itemStack == null)
@@ -108,26 +57,6 @@ namespace AdditionalArmorFeaturesLibrary.Utils
         public void Merge(ArmorFeaturesProp other)
         {
             if (other == null) return;
-
-            if (other.fuelCapacity.HasValue)
-                fuelCapacity = other.fuelCapacity;
-
-            if (!string.IsNullOrEmpty(other.PowerType))
-                PowerType = other.PowerType;
-
-            if (other.UseFuel.HasValue)
-                UseFuel = other.UseFuel;
-
-            if (other.OnCraftedFueled.HasValue)
-                OnCraftedFueled = other.OnCraftedFueled;
-
-            if (other.FuelList?.Count > 0)
-            {
-                foreach (var fuel in other.FuelList)
-                {
-                    FuelList[fuel.Key] = fuel.Value;
-                }
-            }
 
             // future:
             // if (other.lightHsv != null)

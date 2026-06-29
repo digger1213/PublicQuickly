@@ -40,13 +40,6 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             }
         }
 
-        //public override void OnLoaded(ICoreAPI api)
-        //{
-        //    this.api = api;
-
-        //    base.OnLoaded(api);
-        //}
-
         public bool LightState(ItemStack stack)
         {
             Console.WriteLine("Lightstate trigger");
@@ -63,8 +56,9 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             bool hasFuel = collObj.GetCollectibleInterface<IPowerSource>()?.HasPower(stack) ?? false;
 
+            var fuelBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
             // Only block activation if no fuel
-            if (active && !hasFuel && (ArmorFeaturesProp.ReadFrom(stack).UseFuel ?? false) && stackBehavior.RequiresPower)
+            if (active && !hasFuel && (fuelBehavior.UseFuel ?? false) && stackBehavior.RequiresPower)
             {
                 if (api?.Side == EnumAppSide.Client)
                 {
@@ -113,32 +107,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             // Update state
             stack.Attributes.SetBool("togglelight", active);
 
-            ToggleLightHsv(slot.Itemstack);
-
             slot.MarkDirty();
-        }
-
-        public virtual void ToggleLightHsv(ItemStack itemStack)
-        {
-            var stackBehavior = itemStack.Collectible.GetBehavior<CollectibleBehaviorLight>();
-
-            Console.WriteLine(stackBehavior.lightSoundPath);
-            //If the Toggle light is turned on, go in.
-            if (itemStack.Attributes.GetBool("togglelight"))
-            { //Check if the value actually exists.
-                if (stackBehavior.lightHSV.Length > 0)
-                {//set LightHsv of item to the custom LightHSV variable.
-                    itemStack.Collectible.LightHsv = stackBehavior.lightHSV;
-                }
-                else
-                {
-                    itemStack.Collectible.LightHsv = new byte[] { 0, 0, 0 };
-                }
-            }
-            else
-            { //If the Toggle light is turned off, turn light off.
-                itemStack.Collectible.LightHsv = new byte[] { 0, 0, 0 };
-            }
         }
 
 
@@ -160,22 +129,6 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
                 }
             }.Append(base.GetHeldInteractionHelp(inSlot, ref handling));
-        }
-            
-        public virtual byte[] GetCustomLightHsv(ItemStack item)
-        {
-            if (!RequiresPower) return lightHSV;
-
-            //check for power
-            var behaviorPower = item.Collectible.GetCollectibleBehavior<CollectibleBehaviorPower>(true);
-            if (behaviorPower == null || !behaviorPower.PowerState(item)) return new byte[] { 0, 0, 0 };
-
-            return lightHSV;
-        }
-
-        public virtual string GetLightSoundPath(ItemStack item)
-        {
-            return lightSoundPath;
         }
 
     }

@@ -1,15 +1,14 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
 using AdditionalArmorFeaturesLibrary.Utils;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
-using Vintagestory.Server;
-using static AdditionalArmorFeaturesLibrary.Utils.ArmorFeaturesProp;    
 
 namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 {
@@ -18,17 +17,36 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
     class CollectibleBehaviorJetpack : CollectibleBehavior
     {
-
         private ICoreAPI? api { get; set; }
-
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
-
         public ParticleEmitter particleEmitter = new ParticleEmitter();
+
+        [JsonProperty]
+        public bool RequiresPower { get; set; } = true;
+        [JsonProperty]
+        public string? jetpackSoundPath { get; set; }
+        [JsonProperty]
+        public double jetMaxUpwardVel = 0.25;
+        [JsonProperty]
+        public double jetUpwardVel = 0.03;
+        [JsonProperty]
+        public double jetConsumption = 0;
+
+        [JsonProperty]
+        public ParticleEntry[] particlesList { get; set; } = Array.Empty<ParticleEntry>();
 
         public CollectibleBehaviorJetpack(CollectibleObject collObj) : base(collObj)
         {
         }
 
+        public override void Initialize(JsonObject properties)
+        {
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
+        }
         public override void OnLoaded(ICoreAPI api)
         {
             this.api = api;
@@ -43,7 +61,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
         public virtual void SetJetpackActive(ItemSlot slot, bool active, EntityPlayer player)
         {
-            if (slot == null || slot.Empty || api == null) return;
+            if (slot == null || slot.Empty) return;
 
             ItemStack stack = slot.Itemstack;
 
@@ -71,18 +89,17 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 return;
             }
 
+            var stackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorJetpack>();
+
             //Propels person, also limits speed.
-            player.Pos.Motion.Y = Math.Min(player.Pos.Motion.Y + (ArmorFeaturesProp.ReadFrom(stack).jetUpwardVel), ArmorFeaturesProp.ReadFrom(stack).jetMaxUpwardVel);
+            player.Pos.Motion.Y = Math.Min(player.Pos.Motion.Y + (stackBehavior.jetUpwardVel), stackBehavior.jetMaxUpwardVel);
 
             //Any particles set?
-            if (ArmorFeaturesProp.ReadFrom(stack).particlesList.Length > 0)
+            if (stackBehavior.particlesList.Length > 0)
             {
-                particleEmitter.EmitParticles(api, player, stack);
+                particleEmitter.EmitParticles(api, player, stack, stackBehavior.particlesList);
             }
 
-
-            //Commented this out because it appears to break animations, hopefully won't cause issues
-            //slot.MarkDirty();
         }
 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)

@@ -1,5 +1,6 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
 using AdditionalArmorFeaturesLibrary.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -20,8 +21,20 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
 
+        [JsonProperty]
+        public string? exstateSoundPath { get; set; }
+
         public CollectibleBehaviorExstate(CollectibleObject collObj) : base(collObj)
         {
+        }
+
+        public override void Initialize(JsonObject properties)
+        {
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
         }
 
         public override void OnLoaded(ICoreAPI api)
@@ -47,7 +60,8 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             // Play toggle sound
             if (player != null)
             {
-                string soundPath = ArmorFeaturesProp.ReadFrom(stack)?.exstateSoundPath ?? string.Empty;
+                var exstateBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorExstate>();
+                string soundPath = exstateBehavior.exstateSoundPath ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(soundPath))
                 {

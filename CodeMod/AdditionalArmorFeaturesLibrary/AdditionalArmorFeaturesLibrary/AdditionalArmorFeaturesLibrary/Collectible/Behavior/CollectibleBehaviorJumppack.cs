@@ -1,8 +1,10 @@
 ﻿using AdditionalArmorFeaturesLibrary.Collectible.Behavior;
 using AdditionalArmorFeaturesLibrary.Interfaces;
 using AdditionalArmorFeaturesLibrary.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
+using System.Reflection.Emit;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -20,13 +22,36 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
     {
 
         private ICoreAPI? api { get; set; }
-
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
-
         public ParticleEmitter particleEmitter = new ParticleEmitter();
+
+        //Jumppack Var.
+        [JsonProperty]
+        public bool RequiresPower { get; set; } = true;
+        [JsonProperty]
+        public double jumpForwardVel = 0;
+        [JsonProperty]
+        public double jumpUpwardVel = 0;
+        [JsonProperty]
+        public double jumpDelay = 0;
+        [JsonProperty]
+        public double jumpConsumption = 0;
+        [JsonProperty]
+        public string? jumppackSoundPath { get; set; }
+        [JsonProperty]
+        public ParticleEntry[] particlesList { get; set; } = Array.Empty<ParticleEntry>();
 
         public CollectibleBehaviorJumppack(CollectibleObject collObj) : base(collObj)
         {
+        }
+
+        public override void Initialize(JsonObject properties)
+        {
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
         }
 
         public override void OnLoaded(ICoreAPI api)
@@ -59,6 +84,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             if (slot == null || slot.Empty || api == null) return;
 
             ItemStack stack = slot.Itemstack;
+            var stackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorJumppack>();
 
             //Only continue if jumppack is active.
             if (!JumppackState(stack)) return;
@@ -67,7 +93,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             long lastActivation = slot.Itemstack.TempAttributes.GetLong("jumppackLastUse");
             long now = api.World.ElapsedMilliseconds;
 
-            if (now - lastActivation < (ArmorFeaturesProp.ReadFrom(stack)?.jumpDelay * 1000))
+            if (now - lastActivation < (stackBehavior.jumpDelay * 1000))
             {
                 return;
             }
@@ -78,7 +104,7 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             // Play toggle sound
             if (player != null)
             {
-                string soundPath = ArmorFeaturesProp.ReadFrom(stack)?.jumppackSoundPath ?? string.Empty;
+                string soundPath = stackBehavior.jumppackSoundPath ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(soundPath))
                 {
@@ -97,18 +123,23 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             Vec3f eyes = player.Pos.GetViewVector();
             Console.WriteLine(eyes);
-            player.Pos.Motion.Y = (ArmorFeaturesProp.ReadFrom(stack)?.jumpUpwardVel ?? 0) * 0.1;
-            player.Pos.Motion.X = (ArmorFeaturesProp.ReadFrom(stack)?.jumpForwardVel ?? 0) * 0.1 * eyes.X;
-            player.Pos.Motion.Z = (ArmorFeaturesProp.ReadFrom(stack)?.jumpForwardVel ?? 0) * 0.1 * eyes.Z;
+            player.Pos.Motion.Y = (stackBehavior.jumpUpwardVel) * 0.1;
+            player.Pos.Motion.X = (stackBehavior.jumpForwardVel) * 0.1 * eyes.X;
+            player.Pos.Motion.Z = (stackBehavior.jumpForwardVel) * 0.1 * eyes.Z;
 
             //Consumes fuel, only when feature is enabled.
-            var fuelbehavior = stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorFuel>(true);
-            fuelbehavior.ActionConsumePower(stack, player, ArmorFeaturesProp.ReadFrom(stack).jumpConsumption);
+            var fuelBehavior = stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorFuel>(true);
+            var jumppackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorJumppack>();
+            if (jumppackBehavior.RequiresPower)
+            {
+                fuelBehavior.ActionConsumePower(stack, player, stackBehavior.jumpConsumption);
+            }
+            
 
             //Any particles set?
-            if (ArmorFeaturesProp.ReadFrom(stack).particlesList.Length > 0)
+            if (stackBehavior.particlesList.Length > 0)
             {
-                particleEmitter.EmitParticles(api, player, stack);
+                particleEmitter.EmitParticles(api, player, stack, stackBehavior.particlesList);
             }
 
             slot.MarkDirty();

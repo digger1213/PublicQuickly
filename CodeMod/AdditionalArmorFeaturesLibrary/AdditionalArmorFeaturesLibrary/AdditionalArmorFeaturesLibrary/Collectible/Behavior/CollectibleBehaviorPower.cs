@@ -1,5 +1,6 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
 using AdditionalArmorFeaturesLibrary.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -18,9 +19,19 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
         private ICoreAPI? api { get; set; }
 
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
+        [JsonProperty]
+        public string? powerSoundPath { get; set; }
 
         public CollectibleBehaviorPower(CollectibleObject collObj) : base(collObj)
         {
+        }
+        public override void Initialize(JsonObject properties)
+        {
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
         }
 
         public override void OnLoaded(ICoreAPI api)
@@ -46,7 +57,8 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
             bool hasFuel = collObj.GetCollectibleInterface<IPowerSource>()?.HasPower(stack) ?? false;
 
             // Only block activation if no fuel
-            if (active && !hasFuel && (ArmorFeaturesProp.ReadFrom(stack).UseFuel ?? false))
+            var fuelBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorFuel>();
+            if (active && !hasFuel && (fuelBehavior?.UseFuel ?? false))
             {
                 if (api?.Side == EnumAppSide.Client)
                 {
@@ -67,7 +79,8 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 
             if (player != null)
             {
-                string soundPath = ArmorFeaturesProp.ReadFrom(stack)?.powerSoundPath ?? string.Empty;
+                var powerBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorPower>();
+                string soundPath = powerBehavior.powerSoundPath ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(soundPath))
                 {
@@ -104,10 +117,10 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
                 };
             }
 
+            var lightBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorLight>();
             //Turn off all toggleables if FeaturesUsePower
-            if (!active && ArmorFeaturesProp.ReadFrom(slot.Itemstack).FeaturesUsePower)
+            if (!active && lightBehavior.RequiresPower)
             {
-                var lightBehavior = slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorLight>(true);
                 lightBehavior?.SetLightActive(slot, false, player);
 
             }

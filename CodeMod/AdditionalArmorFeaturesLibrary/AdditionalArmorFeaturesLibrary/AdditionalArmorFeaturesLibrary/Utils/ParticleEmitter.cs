@@ -10,16 +10,18 @@ namespace AdditionalArmorFeaturesLibrary.Utils
 {
     internal class ParticleEmitter
     {
+        public ParticleEntry[] particlesList { get; set; } = Array.Empty<ParticleEntry>();
+
         //Handles the particle emission for the items.
-        public void EmitParticles(ICoreAPI api, EntityPlayer player, ItemStack stack)
+        public void EmitParticles(ICoreAPI api, EntityPlayer player, ItemStack stack, ParticleEntry[] particlesList)
         {
             //Get all the particles.
-            for (int i = 0; i < (ArmorFeaturesProp.ReadFrom(stack).particlesList.Length); i++)
+            for (int i = 0; i < particlesList.Length; i++)
             {
-                Console.WriteLine(ArmorFeaturesProp.ReadFrom(stack).particlesList[i].attachmentPointName);
+                Console.WriteLine(particlesList[i].attachmentPointName);
 
                 //May god help us.
-                var AttachPointPose = player?.AnimManager?.Animator?.GetAttachmentPointPose(ArmorFeaturesProp.ReadFrom(stack).particlesList[i].attachmentPointName); //"RightHand"
+                var AttachPointPose = player?.AnimManager?.Animator?.GetAttachmentPointPose(particlesList[i].attachmentPointName); //"RightHand"
                 var AttachPoint = AttachPointPose?.AttachPoint;
 
                 if (player is null || AttachPointPose is null || AttachPoint is null) return;
@@ -37,7 +39,7 @@ namespace AdditionalArmorFeaturesLibrary.Utils
                 Vec3d particleOffset = particleMatrix.TransformVector(new Vec4f(0.0f, 0f, 0.0f, 1f)).XYZ.ToVec3d();
                 Vec3d localPoint = particleOffset + player.Pos.XYZ;
 
-                Argb color = ArmorFeaturesProp.ReadFrom(stack).particlesList[i].color;
+                Argb color = particlesList[i].color;
 
                 if (localPoint != null)
                 {
@@ -47,11 +49,11 @@ namespace AdditionalArmorFeaturesLibrary.Utils
                         ColorUtil.ToRgba(color.alpha, color.red, color.green, color.blue),    // color
                         localPoint,
                         localPoint,
-                        ArmorFeaturesProp.ReadFrom(stack).particlesList[i].minVelocity,  // minmotion
-                        ArmorFeaturesProp.ReadFrom(stack).particlesList[i].maxVelocity, // maxmotion
-                        ArmorFeaturesProp.ReadFrom(stack).particlesList[i].lifeLength,  // life length
-                        ArmorFeaturesProp.ReadFrom(stack).particlesList[i].gravity, // gravity
-                        ArmorFeaturesProp.ReadFrom(stack).particlesList[i].particleSize  // size 
+                        particlesList[i].minVelocity,  // minmotion
+                        particlesList[i].maxVelocity, // maxmotion
+                        particlesList[i].lifeLength,  // life length
+                        particlesList[i].gravity, // gravity
+                        particlesList[i].particleSize  // size 
                         );
                 }
 

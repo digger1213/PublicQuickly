@@ -1,14 +1,14 @@
 ﻿using AdditionalArmorFeaturesLibrary.Interfaces;
 using AdditionalArmorFeaturesLibrary.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
-using Vintagestory.Server;
 
 namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
 {
@@ -16,12 +16,21 @@ namespace AdditionalArmorFeaturesLibrary.Collectible.Behavior
     internal class CollectibleBehaviorNightvision : CollectibleBehavior
     {
         private ICoreAPI? api { get; set; }
-
         public ArmorFeaturesProp? armorFeaturesProp => ArmorFeaturesProp.ReadFrom(this.collObj);
 
-        public ParticleEmitter particleEmitter = new ParticleEmitter();
+        [JsonProperty]
+        public bool RequiresPower { get; set; } = true;
 
         public CollectibleBehaviorNightvision(CollectibleObject collObj) : base(collObj) { }
+
+        public override void Initialize(JsonObject properties)
+        {
+            base.Initialize(properties);
+            if (properties.Exists)
+            {
+                properties.Token.Populate(this);
+            }
+        }
 
         public override void OnLoaded(ICoreAPI api)
         {

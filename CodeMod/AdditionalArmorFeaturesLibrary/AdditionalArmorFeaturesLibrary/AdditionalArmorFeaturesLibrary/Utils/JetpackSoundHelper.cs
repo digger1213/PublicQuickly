@@ -7,6 +7,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Config;
 using Vintagestory.Client.NoObf;
+using AdditionalArmorFeaturesLibrary.Collectible.Behavior;
 
 namespace AdditionalArmorFeaturesLibrary.Utils
 {
@@ -21,9 +22,10 @@ namespace AdditionalArmorFeaturesLibrary.Utils
             {
                 if (jetSound == null || !jetSound.IsPlaying)
                 {
+                    var jetpackBehavior = stack.Collectible.GetBehavior<CollectibleBehaviorJetpack>();
                     jetSound = ((IClientWorldAccessor)api.World).LoadSound(new SoundParams()
                     {
-                        Location = new AssetLocation(ArmorFeaturesProp.ReadFrom(stack).jetpackSoundPath),
+                        Location = new AssetLocation(jetpackBehavior.jetpackSoundPath),
                         ShouldLoop = true,
                         Position = new Vec3f((float)player.Pos.X + 0.5f, (float)player.Pos.Y + 0.75f, (float)player.Pos.Z + 0.5f),
                         DisposeOnFinish = false,
